@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Followed Streamers Sorter</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div id="app">
+    <h1>Followed Streamers Sorter</h1>
+    
+    <div class="status-container">
+      <div class="status-label">Status:</div>
+      <div id="status" class="status-value">Enabled</div>
+    </div>
+    
+    <div class="button-container">
+      <button id="toggleButton" class="primary-button">Disable</button>
+      <button id="optionsButton" class="secondary-button">Options</button>
+    </div>
+    
+    <div class="info-container">
+      <p>This extension is active on Chaturbate followed streamers pages.</p>
+      <p>Priority Rooms: <span id="priorityCount">0</span></p>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

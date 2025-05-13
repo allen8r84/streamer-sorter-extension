@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Followed Streamers Sorter Options</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Followed Streamers Sorter Options</h1>
+    
+    <div class="option-section">
+      <h2>Priority Streamers</h2>
+      <p>Add favorite streamers that will always appear at the top of your list.</p>
+      
+      <div class="input-group">
+        <input type="text" id="newPriorityRoom" placeholder="Add streamer username">
+        <button id="addPriorityRoom" class="primary-button">Add</button>
+      </div>
+      
+      <div class="priority-list-container">
+        <div id="priorityRoomsList" class="priority-list"></div>
+      </div>
+    </div>
+    
+    <div class="option-section">
+      <h2>Appearance</h2>
+      
+      <div class="option-row">
+        <label for="highlightColor">Highlight Color:</label>
+        <input type="color" id="highlightColor">
+      </div>
+      
+      <div class="option-row">
+        <label>Theme Mode:</label>
+        <div class="theme-selector">
+          <button id="lightTheme" class="theme-button">Light</button>
+          <button id="darkTheme" class="theme-button">Dark</button>
+          <button id="autoTheme" class="theme-button active">Auto</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="option-section">
+      <h2>About</h2>
+      <p>Version: 1.0.0</p>
+      <p>For issues or feature requests, please contact the developer.</p>
+    </div>
+    
+    <div class="actions">
+      <button id="resetDefault" class="secondary-button">Reset to Default</button>
+      <button id="saveOptions" class="primary-button">Save Options</button>
+    </div>
+  </div>
+  <script src="options.js"></script>
+</body>
+</html>
