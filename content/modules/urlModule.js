@@ -27,7 +27,7 @@ const urlModule = (() => {
   function createUrlsPopup(urls, themeModule) {
     // Create container for popup
     const popupContainer = document.createElement('div');
-    popupContainer.className = 'popup-container';
+    popupContainer.className = 'fssorter-popup-container';
     
     // Apply theme if theme module available
     if (themeModule && typeof themeModule.applyTheme === 'function') {
@@ -36,19 +36,19 @@ const urlModule = (() => {
 
     // Create title container with X button
     const titleContainer = document.createElement('div');
-    titleContainer.className = 'popup-title-container';
+    titleContainer.className = 'fssorter-popup-title-container';
     popupContainer.appendChild(titleContainer);
 
     // Create title
     const title = document.createElement('div');
     title.textContent = 'Favorite Streamer URLs';
-    title.className = 'popup-title';
+    title.className = 'fssorter-popup-title';
     titleContainer.appendChild(title);
 
     // Create X button
     const closeX = document.createElement('div');
     closeX.textContent = '✕';
-    closeX.className = 'popup-close';
+    closeX.className = 'fssorter-popup-close';
     closeX.addEventListener('click', function() {
       if (document.body.contains(popupContainer)) {
         document.body.removeChild(popupContainer);
@@ -59,25 +59,25 @@ const urlModule = (() => {
 
     // Create URL content area
     const urlContent = document.createElement('div');
-    urlContent.className = 'popup-content';
+    urlContent.className = 'fssorter-popup-content';
     urlContent.textContent = urls;
     popupContainer.appendChild(urlContent);
 
     // Create buttons container
     const buttonsContainer = document.createElement('div');
-    buttonsContainer.className = 'popup-buttons-container';
+    buttonsContainer.className = 'fssorter-popup-buttons-container';
     popupContainer.appendChild(buttonsContainer);
 
     // Create copy button
     const copyButton = document.createElement('button');
     copyButton.textContent = 'Copy URLs to Clipboard';
-    copyButton.className = 'sorter-button sorter-primary-button';
+    copyButton.className = 'fssorter-button fssorter-primary-button';
     buttonsContainer.appendChild(copyButton);
 
     // Create close button
     const closeButton = document.createElement('button');
     closeButton.textContent = 'Close';
-    closeButton.className = 'sorter-button sorter-secondary-button';
+    closeButton.className = 'fssorter-button fssorter-secondary-button';
     buttonsContainer.appendChild(closeButton);
 
     // Add click event for copy button
@@ -89,21 +89,21 @@ const urlModule = (() => {
           copyButton.textContent = 'Copied!';
 
           // Change style temporarily
-          copyButton.classList.remove('sorter-primary-button');
-          copyButton.classList.add('sorter-action-button');
+          copyButton.classList.remove('fssorter-primary-button');
+          copyButton.classList.add('fssorter-action-button');
 
           // Change back after 2 seconds
           setTimeout(() => {
             copyButton.textContent = originalText;
-            copyButton.classList.remove('sorter-action-button');
-            copyButton.classList.add('sorter-primary-button');
+            copyButton.classList.remove('fssorter-action-button');
+            copyButton.classList.add('fssorter-primary-button');
           }, 2000);
         })
         .catch(err => {
           console.error('Failed to copy text: ', err);
           copyButton.textContent = 'Failed to Copy';
-          copyButton.classList.remove('sorter-primary-button');
-          copyButton.classList.add('sorter-delete-button');
+          copyButton.classList.remove('fssorter-primary-button');
+          copyButton.classList.add('fssorter-delete-button');
         });
     });
 

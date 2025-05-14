@@ -19,7 +19,7 @@ const priorityRoomsModule = (() => {
     visiblePriorityRoomsCount = 0;
     
     // Set CSS custom property for highlight color
-    document.documentElement.style.setProperty('--highlight-color', highlightColor);
+    document.documentElement.style.setProperty('--fssorter-highlight-color', highlightColor);
     
     console.log("Priority Rooms module initialized with", priorityRooms.length, "rooms");
     return { priorityRooms, highlightColor };
@@ -127,7 +127,7 @@ const priorityRoomsModule = (() => {
     highlightColor = color;
     
     // Update CSS custom property for highlight color
-    document.documentElement.style.setProperty('--highlight-color', highlightColor);
+    document.documentElement.style.setProperty('--fssorter-highlight-color', highlightColor);
     
     if (storageModule) {
       storageModule.saveSettings('highlightColor', color);
@@ -150,10 +150,10 @@ const priorityRoomsModule = (() => {
 
     try {
       if (isPriority) {
-        li.classList.add('priority-room');
+        li.classList.add('fssorter-priority-room');
         visiblePriorityRoomsCount++;
       } else {
-        li.classList.remove('priority-room');
+        li.classList.remove('fssorter-priority-room');
       }
     } catch (error) {
       console.warn("Error applying priority room styling:", error);

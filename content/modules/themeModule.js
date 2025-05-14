@@ -18,7 +18,8 @@ const themeModule = (() => {
 
   // Detect if the site is in dark mode
   function detectSiteDarkMode() {
-    // Check if the body or html has .darkmode class
+    // Note: We still need to check for .darkmode class from the site
+    // This is intentionally not prefixed as it's referencing the site's own class
     const hasDarkModeClass = document.body.classList.contains('darkmode') ||
                             document.documentElement.classList.contains('darkmode');
 
@@ -78,14 +79,14 @@ const themeModule = (() => {
     }
     
     // Remove any existing theme classes first
-    element.classList.remove('light-theme', 'dark-theme');
+    element.classList.remove('fssorter-light-theme', 'fssorter-dark-theme');
     
     // Add the current theme class
-    element.classList.add(`${colorMode}-theme`);
+    element.classList.add(`fssorter-${colorMode}-theme`);
     
     // Add specific element type class if provided
     if (elementType) {
-      element.classList.add(`sorter-${elementType}`);
+      element.classList.add(`fssorter-${elementType}`);
     }
   }
 

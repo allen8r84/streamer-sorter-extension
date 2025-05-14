@@ -168,14 +168,14 @@ const paginationModule = (() => {
   function createProgressIndicator(totalPages) {
     const progressIndicator = document.createElement('div');
     progressIndicator.id = "stream-collector-indicator";
-    progressIndicator.className = "progress-indicator";
+    progressIndicator.className = "fssorter-progress-indicator";
 
     progressIndicator.innerHTML = `
       <div>Loading all followed streams</div>
       <div style="margin: 10px 0;">Page <span id="load-progress">1</span> of ${totalPages}</div>
       <div style="margin-bottom: 10px;">Found <span id="streams-count">0</span> streams</div>
-      <div class="progress-bar-container">
-        <div id="progress-fill" class="progress-bar-fill" style="width: 0%;"></div>
+      <div class="fssorter-progress-bar-container">
+        <div id="progress-fill" class="fssorter-progress-bar-fill" style="width: 0%;"></div>
       </div>
     `;
     
@@ -215,7 +215,13 @@ const paginationModule = (() => {
     // Update progress indicators
     document.getElementById('load-progress').textContent = "1";
     document.getElementById('streams-count').textContent = allStreamsList.length;
-    document.getElementById('progress-fill').style.width = `${(1 / totalPagesToProcess) * 100}%`;
+    
+    // Use CSS variable approach - define the width as a CSS variable
+    const progressFill = document.getElementById('progress-fill');
+    if (progressFill) {
+      progressFill.style.setProperty('--fssorter-progress-width', `${(1 / totalPagesToProcess) * 100}%`);
+      progressFill.style.width = `${(1 / totalPagesToProcess) * 100}%`;
+    }
 
     console.log(`Collected ${currentPageStreams.length} streams from page 1`);
 
@@ -243,7 +249,13 @@ const paginationModule = (() => {
 
     // Update progress indicators
     document.getElementById('load-progress').textContent = currentProcessingPage;
-    document.getElementById('progress-fill').style.width = `${(currentProcessingPage / totalPagesToProcess) * 100}%`;
+    
+    // Update progress bar with CSS variable
+    const progressFill = document.getElementById('progress-fill');
+    if (progressFill) {
+      progressFill.style.setProperty('--fssorter-progress-width', `${(currentProcessingPage / totalPagesToProcess) * 100}%`);
+      progressFill.style.width = `${(currentProcessingPage / totalPagesToProcess) * 100}%`;
+    }
 
     console.log(`Processing page ${currentProcessingPage} of ${totalPagesToProcess}`);
 
@@ -337,7 +349,7 @@ const paginationModule = (() => {
     // Hide the pagination element
     const paginationElement = document.querySelector('#roomlist_pagination');
     if (paginationElement) {
-      paginationElement.classList.add('sorter-hidden');
+      paginationElement.classList.add('fssorter-hidden');
     }
 
     // Update loading message
