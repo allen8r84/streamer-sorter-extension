@@ -1,0 +1,276 @@
+/* Extension Styles - Used by all extension modules */
+
+/* Priority Room Styling */
+.priority-room {
+    background-color: var(--highlight-color, #FFFF00);
+    border: 3px solid #FFD700;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+  }
+  
+  /* Sorting Controls */
+  .sorter-controls-container {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 9999;
+    padding: 10px;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 250px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .sorter-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .sorter-button-container {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 5px;
+  }
+  
+  .sorter-button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    flex: 1;
+    font-weight: normal;
+  }
+  
+  .sorter-primary-button {
+    background-color: #306A91;
+    color: white;
+  }
+  
+  .sorter-secondary-button {
+    background-color: #888888;
+    color: white;
+  }
+  
+  .sorter-action-button {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  .sorter-delete-button {
+    background-color: #ff4d4d;
+    color: white;
+  }
+  
+  .sorter-minimize-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    padding: 0px 5px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .sorter-content-container {
+    display: block;
+  }
+  
+  .sorter-hidden {
+    display: none !important;
+  }
+  
+  /* Input fields */
+  .sorter-input-field {
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 5px;
+    box-sizing: border-box;
+  }
+  
+  .sorter-textarea {
+    width: 100%;
+    min-height: 60px;
+    margin-bottom: 5px;
+    box-sizing: border-box;
+  }
+  
+  .sorter-label {
+    margin-top: 5px;
+    font-size: 0.9em;
+  }
+  
+  /* Pagination Progress Indicator */
+  .progress-indicator {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    z-index: 10000;
+    text-align: center;
+    width: 300px;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+  }
+  
+  .progress-bar-container {
+    width: 100%;
+    height: 20px;
+    background-color: #333;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  
+  .progress-bar-fill {
+    height: 100%;
+    background-color: #4CAF50;
+    transition: width 0.3s ease;
+  }
+  
+  /* Popup Styles */
+  .popup-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10000;
+    padding: 15px;
+    border-radius: 5px;
+    width: 500px;
+    max-height: 80%;
+    overflow: auto;
+    box-sizing: border-box;
+  }
+  
+  .popup-title-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid var(--border-color, #ccc);
+  }
+  
+  .popup-title {
+    font-weight: bold;
+  }
+  
+  .popup-close {
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 0 5px;
+  }
+  
+  .popup-close:hover {
+    opacity: 0.7;
+  }
+  
+  .popup-content {
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    overflow-wrap: break-word;
+    max-height: 200px;
+    overflow-y: auto;
+    white-space: pre;
+    font-family: monospace;
+    border: 1px solid var(--border-color, #ccc);
+  }
+  
+  .popup-buttons-container {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  /* Theme Classes */
+  .light-theme {
+    --background-color: #f0f0f0;
+    --text-color: #000000;
+    --border-color: #cccccc;
+    --control-background: #f0f0f0;
+    --button-background: #306A91;
+    --secondary-button-background: #888888;
+    --action-button-background: #4CAF50;
+    --delete-button-background: #ff4d4d;
+    --input-background: #ffffff;
+    --header-background: #306A91;
+    --collapsed-background: #e0e0e0;
+    --popup-background: #f0f0f0;
+    --popup-content-background: #ffffff;
+    --box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    background-color: var(--background-color);
+    color: var(--text-color);
+    box-shadow: var(--box-shadow);
+  }
+  
+  .dark-theme {
+    --background-color: #222222;
+    --text-color: #f0f0f0;
+    --border-color: #555555;
+    --control-background: #333333;
+    --button-background: #0c6a93;
+    --secondary-button-background: #555555;
+    --action-button-background: #2d6e31;
+    --delete-button-background: #8B0000;
+    --input-background: #444444;
+    --header-background: #0c6a93;
+    --collapsed-background: #3a3a3a;
+    --popup-background: #333333;
+    --popup-content-background: #444444;
+    --box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    background-color: var(--background-color);
+    color: var(--text-color);
+    box-shadow: var(--box-shadow);
+    border: 1px solid var(--border-color);
+  }
+  
+  /* Theme-specific control styling */
+  .light-theme .sorter-primary-button {
+    background-color: var(--button-background);
+    color: white;
+  }
+  
+  .light-theme .sorter-secondary-button {
+    background-color: var(--secondary-button-background);
+    color: white;
+  }
+  
+  .light-theme .sorter-action-button {
+    background-color: var(--action-button-background);
+    color: white;
+  }
+  
+  .light-theme .popup-content {
+    background-color: var(--popup-content-background);
+  }
+  
+  .dark-theme .sorter-primary-button {
+    background-color: var(--button-background);
+    color: white;
+  }
+  
+  .dark-theme .sorter-secondary-button {
+    background-color: var(--secondary-button-background);
+    color: white;
+  }
+  
+  .dark-theme .sorter-action-button {
+    background-color: var(--action-button-background);
+    color: white;
+  }
+  
+  .dark-theme .popup-content {
+    background-color: var(--popup-content-background);
+  }
+  
+  .dark-theme .sorter-input-field,
+  .dark-theme .sorter-textarea {
+    background-color: var(--input-background);
+    color: var(--text-color);
+    border-color: var(--border-color);
+  }

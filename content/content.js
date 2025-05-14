@@ -1,6 +1,23 @@
-// content.js - Updated page detection
+// Main content script - entry point that loads all modules dynamically
 (function() {
   console.log("Followed Streamers Sorter Extension v1.0.0 initializing...");
+  
+  // Ensure our CSS is loaded
+  function ensureStylesLoaded() {
+    // Check if the stylesheet is already injected via manifest
+    const styleExists = document.querySelector('link[href*="extension-styles.css"]');
+    
+    if (!styleExists) {
+      console.log("Injecting extension styles...");
+      const styleLink = document.createElement('link');
+      styleLink.rel = 'stylesheet';
+      styleLink.href = chrome.runtime.getURL('content/styles/extension-styles.css');
+      document.head.appendChild(styleLink);
+    }
+  }
+  
+  // Call to ensure styles are loaded
+  ensureStylesLoaded();
   
   // Helper function to dynamically load modules
   function loadModule(moduleName) {
@@ -69,7 +86,7 @@
     return;
   }
   
-  // Rest of the script remains the same, but with added error handling
+  // First, get settings from background script
   chrome.runtime.sendMessage({ action: "getSettings" }, async (settings) => {
     if (!settings) {
       console.error("Failed to get settings, using defaults");
