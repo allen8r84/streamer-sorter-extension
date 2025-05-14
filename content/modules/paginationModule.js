@@ -23,38 +23,17 @@ const paginationModule = (() => {
 
   // Check if pagination exists and start collection process if needed
   function checkPaginationAndCollect() {
-    // Check if pagination exists with fallbacks
-    let paginationElement = document.querySelector('#roomlist_pagination');
-    
-    // Try alternative selectors if not found
-    if (!paginationElement) {
-      paginationElement = document.querySelector('[class*="pagination"]');
-      
-      if (!paginationElement) {
-        // Look for anything that might be pagination
-        const potentialPagination = document.querySelectorAll('ul.paging, .paging, nav, [class*="page"], [data-testid*="pagination"]');
-        
-        for (const elem of potentialPagination) {
-          // Check if it contains page numbers or navigation elements
-          if (elem.querySelectorAll('a, li, .page, [class*="page"], [data-testid*="page"]').length > 0) {
-            paginationElement = elem;
-            console.warn("Using alternative pagination element:", elem);
-            break;
-          }
-        }
-      }
-    }
+    // Check if pagination exists - USING EXACT ORIGINAL SELECTOR
+    const paginationElement = document.querySelector('#roomlist_pagination');
     
     if (!paginationElement) {
       console.log("No pagination found, just applying sort");
       
-      if (sortingModule && typeof sortingModule.sortListItems === 'function') {
+      if (sortingModule) {
         sortingModule.sortListItems('time', 'desc');
-      } else {
-        console.warn("Sorting module not available or missing sortListItems function");
       }
       
-      if (completionCallback && typeof completionCallback === 'function') {
+      if (completionCallback) {
         completionCallback();
       }
       
@@ -90,95 +69,51 @@ const paginationModule = (() => {
 
   // Find the total number of pages from the pagination element
   function findTotalPages(paginationElement) {
-    if (!paginationElement || !(paginationElement instanceof Element)) {
-      console.warn("Invalid pagination element in findTotalPages");
-      return 1; // Default to 1 page
-    }
-  
     let maxPage = 1;
-  
-    try {
-      // Method 1: Check for LastPage attribute
-      const lastPageElement = paginationElement.querySelector('[data-paction-name="LastPage"] a, .active a, .current a, li:last-child a');
-      
-      if (lastPageElement && lastPageElement.textContent) {
-        const pageNum = parseInt(lastPageElement.textContent.trim(), 10);
-        if (!isNaN(pageNum)) {
+
+    // Method 1: Check for LastPage attribute
+    const lastPageElement = paginationElement.querySelector('[data-paction-name="LastPage"] a');
+    if (lastPageElement && lastPageElement.textContent) {
+      const pageNum = parseInt(lastPageElement.textContent.trim(), 10);
+      if (!isNaN(pageNum)) {
+        maxPage = pageNum;
+      }
+    } else {
+      // Method 2: Check all page links and find the highest number
+      const pageLinks = paginationElement.querySelectorAll('a[data-testid="page-number-button"]');
+      pageLinks.forEach(link => {
+        const pageNum = parseInt(link.textContent.trim(), 10);
+        if (!isNaN(pageNum) && pageNum > maxPage) {
           maxPage = pageNum;
         }
-      } else {
-        // Method 2: Check all links for page numbers
-        const pageSelectors = [
-          'a[data-testid="page-number-button"]',
-          'a[href*="page="]',
-          'a[class*="page"]',
-          'li[class*="page"] a',
-          'a'
-        ];
-        
-        // Try each selector until we find page links
-        let pageLinks = [];
-        for (const selector of pageSelectors) {
-          pageLinks = paginationElement.querySelectorAll(selector);
-          if (pageLinks.length > 0) {
-            console.log(`Found page links using selector: ${selector}`);
-            break;
-          }
-        }
-        
-        pageLinks.forEach(link => {
-          // Try to extract page number from various sources
-          let pageNum;
-          
-          // Try from text content
-          pageNum = parseInt(link.textContent.trim(), 10);
-          
-          // If not a number, try from href with page parameter
-          if (isNaN(pageNum) && link.href) {
-            const pageMatch = link.href.match(/[?&]page=(\d+)/);
-            if (pageMatch && pageMatch[1]) {
-              pageNum = parseInt(pageMatch[1], 10);
-            }
-          }
-          
-          // Update max page if we found a valid number
-          if (!isNaN(pageNum) && pageNum > maxPage) {
-            maxPage = pageNum;
-          }
-        });
-      }
-      
-      // Check if we might have missed pages by looking for "Next" or "Last" links
-      const nextLinks = paginationElement.querySelectorAll('a.next, a[class*="next"], a[data-testid*="next"]');
-      if (nextLinks.length > 0 && maxPage === 1) {
-        // If we have a next button but only found 1 page, assume at least 2 pages
-        maxPage = 2;
-        console.warn("Using minimum of 2 pages based on Next button presence");
-      }
-      
-    } catch (error) {
-      console.warn("Error finding total pages:", error);
-      // Default to 1 page
+      });
     }
-  
+
     return maxPage;
   }
 
-  // Create a progress indicator element
+  // Create a progress indicator element - USING DIRECT STYLING LIKE ORIGINAL
   function createProgressIndicator(totalPages) {
     const progressIndicator = document.createElement('div');
     progressIndicator.id = "stream-collector-indicator";
-    progressIndicator.className = "fssorter-progress-indicator";
+    progressIndicator.style.position = 'fixed';
+    progressIndicator.style.top = '50%';
+    progressIndicator.style.left = '50%';
+    progressIndicator.style.transform = 'translate(-50%, -50%)';
+    progressIndicator.style.padding = '20px';
+    progressIndicator.style.zIndex = '10000';
+    progressIndicator.style.textAlign = 'center';
+    progressIndicator.style.width = '300px';
+    progressIndicator.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+    progressIndicator.style.color = 'white';
+    progressIndicator.style.borderRadius = '5px';
 
-    progressIndicator.innerHTML = `
-      <div>Loading all followed streams</div>
-      <div style="margin: 10px 0;">Page <span id="load-progress">1</span> of ${totalPages}</div>
-      <div style="margin-bottom: 10px;">Found <span id="streams-count">0</span> streams</div>
-      <div class="fssorter-progress-bar-container">
-        <div id="progress-fill" class="fssorter-progress-bar-fill" style="width: 0%;"></div>
-      </div>
-    `;
-    
+    progressIndicator.innerHTML = `<div>Loading all followed streams</div>
+                                 <div style="margin: 10px 0;">Page <span id="load-progress">1</span> of ${totalPages}</div>
+                                 <div style="margin-bottom: 10px;">Found <span id="streams-count">0</span> streams</div>
+                                 <div class="progress-bar" style="width: 100%; height: 20px; background-color: #333; border-radius: 10px; overflow: hidden;">
+                                    <div id="progress-fill" style="width: 0%; height: 100%; background-color: #4CAF50;"></div>
+                                 </div>`;
     return progressIndicator;
   }
 
@@ -215,13 +150,7 @@ const paginationModule = (() => {
     // Update progress indicators
     document.getElementById('load-progress').textContent = "1";
     document.getElementById('streams-count').textContent = allStreamsList.length;
-    
-    // Use CSS variable approach - define the width as a CSS variable
-    const progressFill = document.getElementById('progress-fill');
-    if (progressFill) {
-      progressFill.style.setProperty('--fssorter-progress-width', `${(1 / totalPagesToProcess) * 100}%`);
-      progressFill.style.width = `${(1 / totalPagesToProcess) * 100}%`;
-    }
+    document.getElementById('progress-fill').style.width = `${(1 / totalPagesToProcess) * 100}%`;
 
     console.log(`Collected ${currentPageStreams.length} streams from page 1`);
 
@@ -249,13 +178,7 @@ const paginationModule = (() => {
 
     // Update progress indicators
     document.getElementById('load-progress').textContent = currentProcessingPage;
-    
-    // Update progress bar with CSS variable
-    const progressFill = document.getElementById('progress-fill');
-    if (progressFill) {
-      progressFill.style.setProperty('--fssorter-progress-width', `${(currentProcessingPage / totalPagesToProcess) * 100}%`);
-      progressFill.style.width = `${(currentProcessingPage / totalPagesToProcess) * 100}%`;
-    }
+    document.getElementById('progress-fill').style.width = `${(currentProcessingPage / totalPagesToProcess) * 100}%`;
 
     console.log(`Processing page ${currentProcessingPage} of ${totalPagesToProcess}`);
 
@@ -263,7 +186,7 @@ const paginationModule = (() => {
     fetchPageWithXHR(currentProcessingPage, progressIndicator);
   }
 
-  // Fetch a page using XMLHttpRequest
+  // Fetch a page using XMLHttpRequest - KEEPING ORIGINAL APPROACH
   function fetchPageWithXHR(pageNum, progressIndicator) {
     console.log(`Fetching page ${pageNum} with XHR`);
 
@@ -349,7 +272,7 @@ const paginationModule = (() => {
     // Hide the pagination element
     const paginationElement = document.querySelector('#roomlist_pagination');
     if (paginationElement) {
-      paginationElement.classList.add('fssorter-hidden');
+      paginationElement.style.display = 'none';
     }
 
     // Update loading message

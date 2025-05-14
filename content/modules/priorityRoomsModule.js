@@ -18,74 +18,18 @@ const priorityRoomsModule = (() => {
     highlightColor = initialColor || "#FFFF00";
     visiblePriorityRoomsCount = 0;
     
-    // Set CSS custom property for highlight color
-    document.documentElement.style.setProperty('--fssorter-highlight-color', highlightColor);
-    
     console.log("Priority Rooms module initialized with", priorityRooms.length, "rooms");
     return { priorityRooms, highlightColor };
   }
 
   // Check if a room is in the priority list
   function isPriorityRoom(li) {
-    // Safety check for li
-    if (!li || !(li instanceof Element)) {
-      console.warn("Invalid list item passed to isPriorityRoom");
-      return false;
+    const roomElement = li.querySelector('div.details > div > a');
+    if (roomElement && roomElement.getAttribute('data-room')) {
+      const roomName = roomElement.getAttribute('data-room');
+      return priorityRooms.includes(roomName);
     }
-
-    // Try multiple selectors to find room name
-    let roomElement = li.querySelector('div.details > div > a');
-    let roomName = null;
-    
-    // Primary attempt: data-room attribute
-    if (roomElement && roomElement.hasAttribute('data-room')) {
-      roomName = roomElement.getAttribute('data-room');
-    } else {
-      // Fallback methods:
-      
-      // Try direct href attribute on any anchor
-      const anchors = li.querySelectorAll('a');
-      for (const anchor of anchors) {
-        if (anchor.href) {
-          const pathMatch = anchor.href.match(/\/([^\/]+)\/?$/);
-          if (pathMatch && pathMatch[1]) {
-            roomName = pathMatch[1];
-            break;
-          }
-        }
-      }
-      
-      // If still not found, try looking for any element with room data
-      if (!roomName) {
-        const roomDataElements = li.querySelectorAll('[data-room], [data-roomname], [data-model], [data-username]');
-        for (const elem of roomDataElements) {
-          for (const attr of ['data-room', 'data-roomname', 'data-model', 'data-username']) {
-            if (elem.hasAttribute(attr)) {
-              roomName = elem.getAttribute(attr);
-              break;
-            }
-          }
-          if (roomName) break;
-        }
-        
-        // Last resort: try to extract from any text content that looks like a username
-        if (!roomName) {
-          const allText = li.textContent;
-          const usernameMatch = allText.match(/\b[a-zA-Z0-9_]{3,20}\b/);
-          if (usernameMatch) {
-            roomName = usernameMatch[0];
-            console.warn("Extracted potential room name from text:", roomName);
-          }
-        }
-      }
-    }
-    
-    if (!roomName) {
-      console.warn("Could not identify room name for list item", li);
-      return false;
-    }
-    
-    return priorityRooms.includes(roomName.toLowerCase());
+    return false;
   }
 
   // Add a room to priority list
@@ -111,6 +55,7 @@ const priorityRoomsModule = (() => {
 
   // Save priority rooms to storage
   function savePriorityRooms() {
+    // Save to Chrome storage
     if (storageModule) {
       storageModule.saveSettings('priorityRooms', priorityRooms);
     } else {
@@ -120,14 +65,36 @@ const priorityRoomsModule = (() => {
         data: { priorityRooms: priorityRooms } 
       });
     }
+    
+    // Also save to localStorage for compatibility with original function
+    try {
+      localStorage.setItem('priorityRooms', JSON.stringify(priorityRooms));
+    } catch (e) {
+      console.error("Error saving to localStorage:", e);
+    }
+    
+    // Also save to cookie as backup (like original function)
+    try {
+      setCookie('priorityRooms', JSON.stringify(priorityRooms), 365); // expires in 365 days
+    } catch (e) {
+      console.error("Error saving to cookie:", e);
+    }
+  }
+
+  // Helper function to set a cookie
+  function setCookie(name, value, days) {
+    let expires = "";
+    if (days) {
+      const date = new Date();
+      date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+      expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + encodeURIComponent(value) + expires + "; path=/";
   }
 
   // Update highlight color
   function setHighlightColor(color) {
     highlightColor = color;
-    
-    // Update CSS custom property for highlight color
-    document.documentElement.style.setProperty('--fssorter-highlight-color', highlightColor);
     
     if (storageModule) {
       storageModule.saveSettings('highlightColor', color);
@@ -140,23 +107,19 @@ const priorityRoomsModule = (() => {
     }
   }
 
-  // Apply highlighting to a priority room element
+  // Apply highlighting to a priority room element - USING DIRECT STYLING like original
   function highlightPriorityRoom(li, isPriority) {
-    // Safety check for li
-    if (!li || !(li instanceof Element)) {
-      console.warn("Invalid list item passed to highlightPriorityRoom");
-      return;
-    }
-
-    try {
-      if (isPriority) {
-        li.classList.add('fssorter-priority-room');
-        visiblePriorityRoomsCount++;
-      } else {
-        li.classList.remove('fssorter-priority-room');
-      }
-    } catch (error) {
-      console.warn("Error applying priority room styling:", error);
+    if (isPriority) {
+      // Direct styling exactly like the original function
+      li.style.backgroundColor = highlightColor; // Use the configured color
+      li.style.border = "3px solid #FFD700"; // Gold border
+      li.style.boxShadow = "0 0 10px rgba(255, 215, 0, 0.6)"; // Glowing effect
+      visiblePriorityRoomsCount++;
+    } else {
+      // Reset styles
+      li.style.backgroundColor = "";
+      li.style.border = "";
+      li.style.boxShadow = "";
     }
   }
 

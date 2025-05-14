@@ -4,8 +4,6 @@ const uiControlsModule = (() => {
   let sortingModule;
   let priorityRoomsModule;
   let themeModule;
-  let controlsContainer = null;
-  let minimized = false;
   
   // Initialize the module
   function init(sorting, priorityRooms, theme) {
@@ -18,72 +16,105 @@ const uiControlsModule = (() => {
     createSortControls();
   }
   
-  // Create UI controls for sorting and room management
+  // Create UI controls for sorting and room management - USING ORIGINAL DIRECT DOM MANIPULATION
   function createSortControls() {
-    // Create container for controls
-    controlsContainer = document.createElement('div');
-    controlsContainer.className = 'fssorter-controls-container';
-    
-    // Apply theme
-    themeModule.applyTheme(controlsContainer, 'controls-container');
+    // Create container for controls - USING DIRECT STYLING LIKE ORIGINAL
+    const controlsContainer = document.createElement('div');
+    controlsContainer.style.position = 'fixed';
+    controlsContainer.style.top = '10px';
+    controlsContainer.style.right = '10px';
+    controlsContainer.style.zIndex = '9999';
+    controlsContainer.style.backgroundColor = '#f0f0f0';
+    controlsContainer.style.padding = '10px';
+    controlsContainer.style.borderRadius = '5px';
+    controlsContainer.style.boxShadow = '0 0 10px rgba(0,0,0,0.2)';
+    controlsContainer.style.display = 'flex';
+    controlsContainer.style.flexDirection = 'column';
+    controlsContainer.style.gap = '5px';
     
     // Create title
     const title = document.createElement('div');
     title.textContent = 'Room List Sorter';
-    title.className = 'fssorter-title';
+    title.style.fontWeight = 'bold';
+    title.style.marginBottom = '5px';
     controlsContainer.appendChild(title);
     
     // Create sort buttons container
     const buttonContainer = document.createElement('div');
-    buttonContainer.className = 'fssorter-button-container';
+    buttonContainer.style.display = 'flex';
+    buttonContainer.style.gap = '5px';
+    buttonContainer.style.marginBottom = '5px';
     controlsContainer.appendChild(buttonContainer);
     
     // Create time sort button
     const timeSortButton = document.createElement('button');
     timeSortButton.textContent = 'Sort by Time ↓';
-    timeSortButton.className = 'fssorter-button fssorter-primary-button';
+    timeSortButton.style.padding = '5px 10px';
+    timeSortButton.style.backgroundColor = '#306A91';
+    timeSortButton.style.color = 'white';
+    timeSortButton.style.border = 'none';
+    timeSortButton.style.borderRadius = '4px';
+    timeSortButton.style.cursor = 'pointer';
+    timeSortButton.style.flex = '1';
     buttonContainer.appendChild(timeSortButton);
     
     // Create viewers sort button
     const viewersSortButton = document.createElement('button');
     viewersSortButton.textContent = 'Sort by Viewers ↓';
-    viewersSortButton.className = 'fssorter-button fssorter-secondary-button';
+    viewersSortButton.style.padding = '5px 10px';
+    viewersSortButton.style.backgroundColor = '#888888';
+    viewersSortButton.style.color = 'white';
+    viewersSortButton.style.border = 'none';
+    viewersSortButton.style.borderRadius = '4px';
+    viewersSortButton.style.cursor = 'pointer';
+    viewersSortButton.style.flex = '1';
     buttonContainer.appendChild(viewersSortButton);
-    
-    // Create content container for collapsible content
-    const contentContainer = document.createElement('div');
-    contentContainer.className = 'fssorter-content-container';
-    controlsContainer.appendChild(contentContainer);
     
     // Create priority rooms textarea label
     const priorityRoomsLabel = document.createElement('div');
     priorityRoomsLabel.textContent = 'Priority Rooms (comma-separated):';
-    priorityRoomsLabel.className = 'fssorter-label';
-    contentContainer.appendChild(priorityRoomsLabel);
+    priorityRoomsLabel.style.marginTop = '5px';
+    controlsContainer.appendChild(priorityRoomsLabel);
     
     // Create priority rooms textarea
     const priorityRoomsInput = document.createElement('textarea');
     priorityRoomsInput.value = priorityRoomsModule.getAllPriorityRooms().join(', ');
-    priorityRoomsInput.className = 'fssorter-textarea';
-    contentContainer.appendChild(priorityRoomsInput);
+    priorityRoomsInput.style.width = '100%';
+    priorityRoomsInput.style.minHeight = '60px';
+    priorityRoomsInput.style.marginBottom = '5px';
+    controlsContainer.appendChild(priorityRoomsInput);
     
     // Create apply button
     const applyButton = document.createElement('button');
     applyButton.textContent = 'Apply Priority Rooms';
-    applyButton.className = 'fssorter-button fssorter-action-button';
-    contentContainer.appendChild(applyButton);
+    applyButton.style.padding = '5px 10px';
+    applyButton.style.backgroundColor = '#4CAF50';
+    applyButton.style.color = 'white';
+    applyButton.style.border = 'none';
+    applyButton.style.borderRadius = '4px';
+    applyButton.style.cursor = 'pointer';
+    controlsContainer.appendChild(applyButton);
+    
+    // Create content container for collapsible content
+    const contentContainer = document.createElement('div');
+    contentContainer.style.display = 'block';
+    controlsContainer.appendChild(contentContainer);
     
     // Add minimize/maximize button
     const minimizeButton = document.createElement('button');
     minimizeButton.textContent = '−';
-    minimizeButton.className = 'fssorter-minimize-button';
+    minimizeButton.style.position = 'absolute';
+    minimizeButton.style.top = '5px';
+    minimizeButton.style.right = '5px';
+    minimizeButton.style.padding = '0px 5px';
+    minimizeButton.style.backgroundColor = 'transparent';
+    minimizeButton.style.border = 'none';
+    minimizeButton.style.cursor = 'pointer';
+    minimizeButton.style.fontSize = '16px';
     controlsContainer.appendChild(minimizeButton);
     
     // Keep track of current sort settings
     let currentSortSettings = sortingModule.getCurrentSortSettings();
-    
-    // Update button text based on current sort
-    updateSortButtonsState(timeSortButton, viewersSortButton, currentSortSettings);
     
     // Add click event listener for time sort button
     timeSortButton.addEventListener('click', function() {
@@ -92,7 +123,13 @@ const uiControlsModule = (() => {
       
       currentSortSettings = sortingModule.sortListItems('time', newOrder);
       
-      updateSortButtonsState(timeSortButton, viewersSortButton, currentSortSettings);
+      // Update button text
+      timeSortButton.textContent = `Sort by Time ${currentSortSettings.timeOrder === 'desc' ? '↓' : '↑'}`;
+      viewersSortButton.textContent = `Sort by Viewers ${currentSortSettings.viewersOrder === 'desc' ? '↓' : '↑'}`;
+      
+      // Highlight active sort button
+      timeSortButton.style.backgroundColor = '#306A91';
+      viewersSortButton.style.backgroundColor = '#888888';
     });
     
     // Add click event listener for viewers sort button
@@ -102,7 +139,13 @@ const uiControlsModule = (() => {
       
       currentSortSettings = sortingModule.sortListItems('viewers', newOrder);
       
-      updateSortButtonsState(timeSortButton, viewersSortButton, currentSortSettings);
+      // Update button text
+      timeSortButton.textContent = `Sort by Time ${currentSortSettings.timeOrder === 'desc' ? '↓' : '↑'}`;
+      viewersSortButton.textContent = `Sort by Viewers ${currentSortSettings.viewersOrder === 'desc' ? '↓' : '↑'}`;
+      
+      // Highlight active sort button
+      timeSortButton.style.backgroundColor = '#888888';
+      viewersSortButton.style.backgroundColor = '#306A91';
     });
     
     // Add click event listener for apply button
@@ -137,19 +180,29 @@ const uiControlsModule = (() => {
                                    currentSortSettings.viewersOrder);
         
         // Show feedback
-        showFeedbackMessage(applyButton, 'Applied!');
+        const originalText = applyButton.textContent;
+        const originalBg = applyButton.style.backgroundColor;
+        
+        applyButton.textContent = 'Applied!';
+        applyButton.style.backgroundColor = '#4CAF50';
+        
+        setTimeout(() => {
+          applyButton.textContent = originalText;
+          applyButton.style.backgroundColor = originalBg;
+        }, 1500);
       }
     });
     
     // Add click event listener for minimize/maximize button
+    let minimized = false;
     minimizeButton.addEventListener('click', function() {
       minimized = !minimized;
       
       if (minimized) {
-        contentContainer.classList.add('fssorter-hidden');
+        contentContainer.style.display = 'none';
         minimizeButton.textContent = '+';
       } else {
-        contentContainer.classList.remove('fssorter-hidden');
+        contentContainer.style.display = 'block';
         minimizeButton.textContent = '−';
       }
     });
@@ -157,7 +210,12 @@ const uiControlsModule = (() => {
     // Add theme toggle button
     const themeToggleButton = document.createElement('button');
     themeToggleButton.textContent = 'Toggle Theme';
-    themeToggleButton.className = 'fssorter-button fssorter-secondary-button';
+    themeToggleButton.style.padding = '5px 10px';
+    themeToggleButton.style.backgroundColor = '#888888';
+    themeToggleButton.style.color = 'white';
+    themeToggleButton.style.border = 'none';
+    themeToggleButton.style.borderRadius = '4px';
+    themeToggleButton.style.cursor = 'pointer';
     themeToggleButton.style.marginTop = '10px';
     contentContainer.appendChild(themeToggleButton);
     
@@ -165,17 +223,25 @@ const uiControlsModule = (() => {
     themeToggleButton.addEventListener('click', function() {
       const newMode = themeModule.toggleColorMode();
       
-      // Update theme on all elements
-      themeModule.applyTheme(controlsContainer, 'controls-container');
-      
       // Show feedback
-      showFeedbackMessage(themeToggleButton, `Theme: ${newMode.charAt(0).toUpperCase() + newMode.slice(1)}`);
+      const originalText = themeToggleButton.textContent;
+      
+      themeToggleButton.textContent = `Theme: ${newMode.charAt(0).toUpperCase() + newMode.slice(1)}`;
+      
+      setTimeout(() => {
+        themeToggleButton.textContent = originalText;
+      }, 1500);
     });
     
     // Add export URLs button
     const exportButton = document.createElement('button');
     exportButton.textContent = 'Export Priority URLs';
-    exportButton.className = 'fssorter-button fssorter-secondary-button';
+    exportButton.style.padding = '5px 10px';
+    exportButton.style.backgroundColor = '#888888';
+    exportButton.style.color = 'white';
+    exportButton.style.border = 'none';
+    exportButton.style.borderRadius = '4px';
+    exportButton.style.cursor = 'pointer';
     exportButton.style.marginTop = '5px';
     contentContainer.appendChild(exportButton);
     
@@ -203,50 +269,14 @@ const uiControlsModule = (() => {
     // Show priority room count
     const countLabel = document.createElement('div');
     countLabel.textContent = `Priority rooms visible: ${priorityRoomsModule.getVisibleCount()}`;
-    countLabel.className = 'fssorter-label';
     countLabel.style.marginTop = '10px';
+    countLabel.style.fontSize = '12px';
     contentContainer.appendChild(countLabel);
     
     // Update the count occasionally
     setInterval(() => {
       countLabel.textContent = `Priority rooms visible: ${priorityRoomsModule.getVisibleCount()}`;
     }, 2000);
-  }
-  
-  // Helper function to update sort button state
-  function updateSortButtonsState(timeButton, viewersButton, settings) {
-    // Reset both buttons to secondary style
-    timeButton.className = 'fssorter-button fssorter-secondary-button';
-    viewersButton.className = 'fssorter-button fssorter-secondary-button';
-    
-    // Update text and highlight active sort
-    if (settings.sortBy === 'time') {
-      timeButton.className = 'fssorter-button fssorter-primary-button';
-      timeButton.textContent = `Sort by Time ${settings.timeOrder === 'desc' ? '↓' : '↑'}`;
-      viewersButton.textContent = `Sort by Viewers ${settings.viewersOrder === 'desc' ? '↓' : '↑'}`;
-    } else {
-      viewersButton.className = 'fssorter-button fssorter-primary-button';
-      timeButton.textContent = `Sort by Time ${settings.timeOrder === 'desc' ? '↓' : '↑'}`;
-      viewersButton.textContent = `Sort by Viewers ${settings.viewersOrder === 'desc' ? '↓' : '↑'}`;
-    }
-  }
-  
-  // Helper function to show temporary feedback on a button
-  function showFeedbackMessage(button, message) {
-    const originalText = button.textContent;
-    const originalClass = button.className;
-    
-    button.textContent = message;
-    
-    // Apply feedback style
-    button.classList.remove('fssorter-primary-button', 'fssorter-secondary-button');
-    button.classList.add('fssorter-action-button');
-    
-    // Restore original state after delay
-    setTimeout(() => {
-      button.textContent = originalText;
-      button.className = originalClass;
-    }, 1500);
   }
   
   // Public API

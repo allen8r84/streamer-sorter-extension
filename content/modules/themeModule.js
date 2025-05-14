@@ -4,7 +4,7 @@ const themeModule = (() => {
   let colorMode = "light";
   let storageModule; // Reference to storage module
 
-  // Color schemes (keeping for backward compatibility)
+  // Color schemes
   const colorSchemes = {
     light: {
       background: "#f0f0f0",
@@ -50,14 +50,13 @@ const themeModule = (() => {
         storageModule = module.default;
       });
     
-    colorMode = initialColorMode || (detectSiteDarkMode() ? "dark" : "light");
+    colorMode = initialColorMode || detectSiteDarkMode() ? "dark" : "light";
     console.log(`Theme module initialized with ${colorMode} mode`);
   }
 
   // Detect if the site is in dark mode
   function detectSiteDarkMode() {
-    // Note: We still need to check for .darkmode class from the site
-    // This is intentionally not prefixed as it's referencing the site's own class
+    // Check if the body or html has .darkmode class
     const hasDarkModeClass = document.body.classList.contains('darkmode') ||
                             document.documentElement.classList.contains('darkmode');
 
@@ -109,56 +108,13 @@ const themeModule = (() => {
     return colorMode;
   }
 
-  // Apply theme to an element
-  function applyTheme(element, elementType) {
-    if (!element || !(element instanceof Element)) {
-      console.warn("Invalid element passed to applyTheme");
-      return;
-    }
-    
-    // Remove any existing theme classes first
-    element.classList.remove('fssorter-light-theme', 'fssorter-dark-theme');
-    
-    // Add the current theme class
-    element.classList.add(`fssorter-${colorMode}-theme`);
-    
-    // Add specific element type class if provided
-    if (elementType) {
-      element.classList.add(`fssorter-${elementType}`);
-    }
-  }
-
-  // Get current mode
-  function getCurrentMode() {
-    return colorMode;
-  }
-
-  // Convert old style-based themes to CSS class-based themes
-  function migrateElementStyles(element) {
-    // Apply the appropriate theme class instead of direct styles
-    applyTheme(element);
-    
-    // Clear any direct styles that might have been applied before
-    const styleProps = [
-      'backgroundColor', 'color', 'borderColor', 'boxShadow', 
-      'border', 'borderRadius', 'padding', 'margin'
-    ];
-    
-    styleProps.forEach(prop => {
-      element.style[prop] = '';
-    });
-  }
-
-  // COMPATIBILITY FUNCTION: Get color scheme for current mode
+  // Get color scheme for current mode
   function getCurrentColorScheme() {
-    console.warn("getCurrentColorScheme is deprecated, use applyTheme instead");
     return colorSchemes[colorMode];
   }
 
-  // COMPATIBILITY FUNCTION: Get color scheme for a specific element
+  // Get color scheme for a specific element
   function getElementColorScheme(elementType) {
-    console.warn("getElementColorScheme is deprecated, use applyTheme instead");
-    
     const currentScheme = colorSchemes[colorMode];
     
     // Each element type has its own style mapping
@@ -212,31 +168,26 @@ const themeModule = (() => {
     return styleMap[elementType] || {};
   }
 
-  // COMPATIBILITY FUNCTION: Apply color scheme to an element
+  // Apply color scheme to an element
   function applyColorScheme(element, styles) {
-    console.warn("applyColorScheme is deprecated, use applyTheme instead");
-    
-    if (!element || !(element instanceof Element)) {
-      console.warn("Invalid element passed to applyColorScheme");
-      return;
-    }
-    
     for (const [property, value] of Object.entries(styles)) {
       element.style[property] = value;
     }
+  }
+
+  // Get current mode
+  function getCurrentMode() {
+    return colorMode;
   }
 
   // Public API
   return {
     init,
     toggleColorMode,
-    applyTheme,
-    getCurrentMode,
-    migrateElementStyles,
-    // Add back compatibility functions
     getCurrentColorScheme,
     getElementColorScheme,
-    applyColorScheme
+    applyColorScheme,
+    getCurrentMode
   };
 })();
 
